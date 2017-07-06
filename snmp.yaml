@@ -1,0 +1,22 @@
+---
+- name: Transfer and execute a script.
+  hosts: test
+  become: yes
+  tasks:
+#      - name: install basic packages
+#        action: >
+#          {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+#        with_items:
+#          - snmp
+      - name: Copy and Execute the script
+        script: /root/nc.sh
+        register: result
+        ignore_errors: yes
+#        args:
+ #        executable: /bin/bash
+      - name: clear ssh.log
+        local_action: shell > /root/snmp.log
+      - name: Show output
+        debug: msg="{{result.stdout_lines}}"
+      - name: store output
+        local_action: lineinfile line="{{result.stdout_lines}}" path="/root/snmp.log"
